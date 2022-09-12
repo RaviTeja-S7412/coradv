@@ -1,0 +1,44 @@
+{
+  "name": "my-test-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.6.6",
+    "@heroicons/react": "^1.0.6",
+    "axios": "^0.27.2",
+    "bcrypt": "^5.0.1",
+    "classnames": "^2.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "localstorage-polyfill": "^1.0.1",
+    "mongodb": "^4.9.0",
+    "next": "12.2.4",
+    "next-redux-wrapper": "^7.0.5",
+    "react": "18.2.0",
+    "react-data-table-component": "^7.5.3",
+    "react-dom": "18.2.0",
+    "react-icons": "^4.4.0",
+    "react-redux": "^8.0.2",
+    "react-toastify": "^9.0.8",
+    "redux": "^4.2.0",
+    "redux-devtools-extension": "^2.13.9",
+    "redux-thunk": "^2.4.1",
+    "styled-components": "^5.3.5",
+    "sweetalert": "^2.1.2",
+    "tw-elements": "^1.0.0-alpha12",
+    "winston": "^3.8.2",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.8",
+    "eslint": "8.21.0",
+    "eslint-config-next": "12.2.4",
+    "postcss": "^8.4.16",
+    "tailwindcss": "^3.1.8"
+  }
+}
