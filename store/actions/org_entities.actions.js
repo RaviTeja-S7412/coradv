@@ -22,20 +22,21 @@ export const createOrgentity = (udata) => {
   }
 }
 
-export const updateEmployee = (udata) => {
+export const updateOrgentity = (udata) => {
   return async (dispatch) => {
-    dispatch({ type: orgentityConstants.UPDATE_EMPLOYEE_REQUEST })
-    const res = await axios.post(`/admin/update_employee`, udata)
+    dispatch({ type: orgentityConstants.UPDATE_ORGENTITY_REQUEST })
+    udata["action"] = "UPDATE";
+    const res = await axiosIntance(`/api/admin/org_entities`, udata, 'post')
 
     if (res.status === 200) {
       dispatch({
-        type: orgentityConstants.UPDATE_EMPLOYEE_SUCCESS,
-        payload: { message: res.data.message },
+        type: orgentityConstants.UPDATE_ORGENTITY_SUCCESS,
+        payload: { message: res.message },
       })
     } else {
       dispatch({
-        type: orgentityConstants.UPDATE_EMPLOYEE_FAILURE,
-        payload: { message: res.data.message },
+        type: orgentityConstants.UPDATE_ORGENTITY_FAILURE,
+        payload: { message: res.message, input: res.input },
       })
     }
   }
