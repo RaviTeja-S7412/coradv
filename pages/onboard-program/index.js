@@ -22,6 +22,7 @@ const Onboard = () => {
   const [totalRows, setTotalRows] = useState(0);
   const [perPage, setPerPage] = useState(10);
   const [searchText, setSearchtext] = useState("");
+  const [modallabel, setModallabel] = useState("Create");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageChange, setPagechange] = useState(false);
   const [open, setOpen] = useState(true);
@@ -40,12 +41,32 @@ const Onboard = () => {
   const [contact_phone, setContact_phone] = useState("");
   const [no_liscence_purchase, setNo_liscence_purchase] = useState("");
   const [liscence_expiry, setLiscence_expiry] = useState("");
+  const [entity_id, setEntity_id] = useState("");
 
   const org_entities = useSelector((state) => state.org_entities);
   const Router = useRouter();
 
   const handleEdit = (id) => {
+    setModallabel("Update")
     dispatch(get_singleentity({id:id}))
+  }
+
+  const handleCreate = () => {
+    setModallabel("Create")
+    setOrg_entity_name("");
+    setOrg_region("");
+    setLevel("");
+    setStreet_address("");
+    setState("");
+    setCountry("");
+    setZip_code("");
+    setPhone_no("");
+    setContact_name("");
+    setContact_email("");
+    setContact_phone("");
+    setNo_liscence_purchase("");
+    setLiscence_expiry("");
+    setEntity_id("");
   }
 
   useEffect(() => {
@@ -59,9 +80,11 @@ const Onboard = () => {
       setZip_code(org_entities.entity_data && org_entities.entity_data.zip_code);
       setPhone_no(org_entities.entity_data && org_entities.entity_data.phone_no);
       setContact_name(org_entities.entity_data && org_entities.entity_data.contact_name);
+      setContact_email(org_entities.entity_data && org_entities.entity_data.contact_email);
       setContact_phone(org_entities.entity_data && org_entities.entity_data.contact_phone);
-      setNo_liscence_purchase(org_entities.entity_data && org_entities.entity_data.no_liscence_purchase);
-      setLiscence_expiry(org_entities.entity_data && org_entities.entity_data.liscence_expiry);
+      setNo_liscence_purchase(org_entities.entity_data && org_entities.entity_data.no_licence_purchased);
+      setLiscence_expiry(org_entities.entity_data && org_entities.entity_data.licence_expiry);
+      setEntity_id(org_entities.entity_data && org_entities.entity_data._id);
     }
   },[org_entities.get_singleorg_entity]);
 
@@ -168,7 +191,6 @@ const Onboard = () => {
   useEffect(() => {
     if (org_entities.get_org_entities && !pageChange) {
       fetchUsers(currentPage);
-      console.log("in")
     } else {
       const displayColumns = [
         "id",
@@ -218,10 +240,17 @@ const Onboard = () => {
       contact_email: contact_email,
       contact_phone: contact_phone,
       no_licence_purchased: no_liscence_purchase,
-      licence_expiry: liscence_expiry,
-      created_by: userData.user_id,
+      licence_expiry: liscence_expiry
     };
-    dispatch(createOrgentity(fdata));
+
+    if(entity_id){
+      fdata['modified_by'] = userData.user_id;
+      fdata['entity_id'] = entity_id;
+      dispatch(createOrgentity(fdata));
+    }else{
+      fdata['created_by'] = userData.user_id;
+      dispatch(createOrgentity(fdata));
+    }
     setPagechange(false);
   };
 
@@ -257,6 +286,7 @@ const Onboard = () => {
             className="rounded-full index-add-btn p-3"
             data-bs-toggle="modal"
             data-bs-target="#staticBackdrop"
+            onClick={handleCreate}
           >
             <PlusIcon className="text-white w-5 h-5 rte-cls" />
           </button>
@@ -267,7 +297,7 @@ const Onboard = () => {
                 className="text-xl font-medium leading-normal text-gray-800"
                 id="exampleModalLabel"
               >
-                Create Organization Entity
+                {modallabel} Organization Entity
               </h5>} modalBody={
         <form className="pt-3" method="post" onSubmit={addOrgentity}>
         <div className="grid md:grid-cols-3 md:gap-2">
