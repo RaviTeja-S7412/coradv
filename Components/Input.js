@@ -35,16 +35,17 @@ function Input(prop) {
           id={prop.name}
           className={"block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none dark:text-white focus:outline-none focus:ring-0 peer text-gray-900" + inputstyle}
           placeholder=" "
+          value={prop.value}
           // required={prop.required}
           onChange={(e) => onchangeinput(e)}
         />
         <label
-          for={prop.name}
+          htmlFor={prop.name}
           className="peer-focus:font-medium absolute text-md duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6   text-gray-500 dark:text-gray-400 peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
         >
           {prop.label}
         </label>
-        <p id="helper-text-explanation" class="mt-2 text-xs text-red-500 dark:text-red-400">{ error ? prop.errorMessage : ""}</p>
+        <p id="helper-text-explanation" className="mt-2 text-xs text-red-500 dark:text-red-400">{ error ? prop.errorMessage : ""}</p>
 
       </div>
     </>

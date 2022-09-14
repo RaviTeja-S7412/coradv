@@ -5,13 +5,15 @@ import Layout from "../../Components/Layout";
 import {
   getOrgentities,
   createOrgentity,
+  get_singleentity,
 } from "../../store/actions/org_entities.actions";
 import { Search, Pagination } from "../../Components/datatables";
 import { PencilIcon, TrashIcon, PlusIcon } from "@heroicons/react/outline";
 import { Dialog, Transition } from "@headlessui/react";
 import Input from "../../Components/Input";
 import Link from "next/link";
-import Router from "next/router";
+import { useRouter } from 'next/router'
+import Modal from "../../Components/Modal";
 
 const Onboard = () => {
   const dispatch = useDispatch();
@@ -40,6 +42,31 @@ const Onboard = () => {
   const [liscence_expiry, setLiscence_expiry] = useState("");
 
   const org_entities = useSelector((state) => state.org_entities);
+  const Router = useRouter();
+
+  const handleEdit = (id) => {
+    dispatch(get_singleentity({id:id}))
+  }
+
+  useEffect(() => {
+    if(!org_entities.get_singleorg_entity){
+      setOrg_entity_name(org_entities.entity_data && org_entities.entity_data.org_entity_name);
+      setOrg_region(org_entities.entity_data && org_entities.entity_data.org_region);
+      setLevel(org_entities.entity_data && org_entities.entity_data.level);
+      setStreet_address(org_entities.entity_data && org_entities.entity_data.street_address);
+      setState(org_entities.entity_data && org_entities.entity_data.state);
+      setCountry(org_entities.entity_data && org_entities.entity_data.country);
+      setZip_code(org_entities.entity_data && org_entities.entity_data.zip_code);
+      setPhone_no(org_entities.entity_data && org_entities.entity_data.phone_no);
+      setContact_name(org_entities.entity_data && org_entities.entity_data.contact_name);
+      setContact_phone(org_entities.entity_data && org_entities.entity_data.contact_phone);
+      setNo_liscence_purchase(org_entities.entity_data && org_entities.entity_data.no_liscence_purchase);
+      setLiscence_expiry(org_entities.entity_data && org_entities.entity_data.liscence_expiry);
+    }
+  },[org_entities.get_singleorg_entity]);
+
+  const handleDelete = () => {
+  }
 
   const columns = useMemo(
     () => [
@@ -47,8 +74,9 @@ const Onboard = () => {
         name: "Action",
         cell: (row) => (
           <>
-            <PencilIcon className="nav-icon favicon w-5 h-5 mr-1 stroke-blue-500" />
-            <TrashIcon className="nav-icon favicon w-5 h-5 ml-1 stroke-red-500" />
+            <PencilIcon className="nav-icon favicon w-5 h-5 mr-1 stroke-blue-500 cursor-pointer" data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop" onClick={() => handleEdit(row.id)} />
+            <TrashIcon className="nav-icon favicon w-5 h-5 ml-1 stroke-red-500 cursor-pointer" onClick={() => handleDelete(row.id)} />
           </>
         ),
         grow: 0.5
@@ -140,6 +168,7 @@ const Onboard = () => {
   useEffect(() => {
     if (org_entities.get_org_entities && !pageChange) {
       fetchUsers(currentPage);
+      console.log("in")
     } else {
       const displayColumns = [
         "id",
@@ -168,7 +197,9 @@ const Onboard = () => {
       document.getElementById("staticBackdrop").style.display = "none";
       document.querySelectorAll(".modal-backdrop")
             .forEach(el => el.classList.remove("modal-backdrop"));
-      Router.push("/onboard-program");
+      setTimeout(() => {
+        Router.push("/onboard-program", { shallow: true });
+      }, 2000);    
     }
   }, [org_entities.is_org_entity_added, org_entities.message]);
 
@@ -223,7 +254,7 @@ const Onboard = () => {
         </div>
         <div className="text-white ml-auto mr-5 text-right rounded">
           <button
-            class="rounded-full index-add-btn p-3"
+            className="rounded-full index-add-btn p-3"
             data-bs-toggle="modal"
             data-bs-target="#staticBackdrop"
           >
@@ -232,232 +263,214 @@ const Onboard = () => {
         </div>
       </Layout>
       
-      <div
-        className="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
-        id="staticBackdrop"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-        tabindex="-1"
-        aria-labelledby="staticBackdropLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-xl relative w-auto pointer-events-none">
-          <div className="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
-            <div className="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
-              <h5
+      <Modal target="staticBackdrop" modalHeader={<h5
                 className="text-xl font-medium leading-normal text-gray-800"
                 id="exampleModalLabel"
               >
                 Create Organization Entity
-              </h5>
-              <button
-                type="button"
-                className="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body relative p-4">
-              <form className="pt-3" method="post" onSubmit={addOrgentity}>
-                <div className="grid md:grid-cols-3 md:gap-2">
-                  <Input
-                    type="text"
-                    name="org_entity_name"
-                    style="input-text"
-                    label="Organization Entity Name"
-                    handleChange={(value) => setOrg_entity_name(value)}
-                    errorMessage={
-                      org_entities &&
-                      org_entities.errorInput == "org_entity_name"
-                        ? org_entities.message
-                        : ""
-                    }
-                    required={true}
-                  />
-                  <Input
-                    type="text"
-                    name="org_region"
-                    style="input-text"
-                    label="Organization Region"
-                    handleChange={(value) => setOrg_region(value)}
-                    errorMessage={
-                      org_entities && org_entities.errorInput == "org_region"
-                        ? org_entities.message
-                        : ""
-                    }
-                    required={true}
-                  />
-                  <Input
-                    type="text"
-                    name="level"
-                    style="input-text"
-                    label="Level"
-                    handleChange={(value) => setLevel(value)}
-                    required={true}
-                    errorMessage={
-                      org_entities && org_entities.errorInput == "level"
-                        ? org_entities.message
-                        : ""
-                    }
-                  />
-                  <Input
-                    type="text"
-                    name="street_address"
-                    style="input-text"
-                    label="Street Address"
-                    handleChange={(value) => setStreet_address(value)}
-                    required={true}
-                    errorMessage={
-                      org_entities && org_entities.errorInput == "street_address"
-                        ? org_entities.message
-                        : ""
-                    }
-                  />
-                  <Input
-                    type="text"
-                    name="state"
-                    style="input-text"
-                    label="State"
-                    handleChange={(value) => setState(value)}
-                    required={true}
-                    errorMessage={
-                      org_entities && org_entities.errorInput == "state"
-                        ? org_entities.message
-                        : ""
-                    }
-                  />
-                  <Input
-                    type="text"
-                    name="country"
-                    style="input-text"
-                    label="Country"
-                    handleChange={(value) => setCountry(value)}
-                    required={true}
-                    errorMessage={
-                      org_entities && org_entities.errorInput == "country"
-                        ? org_entities.message
-                        : ""
-                    }
-                  />
-                  <Input
-                    type="number"
-                    name="zip_code"
-                    style="input-text"
-                    label="Zip Code"
-                    handleChange={(value) => setZip_code(value)}
-                    required={true}
-                    errorMessage={
-                      org_entities && org_entities.errorInput == "zip_code"
-                        ? org_entities.message
-                        : ""
-                    }
-                  />
-                  <Input
-                    type="text"
-                    name="phone_no"
-                    style="input-text"
-                    label="Phone No"
-                    handleChange={(value) => setPhone_no(value)}
-                    required={true}
-                    errorMessage={
-                      org_entities && org_entities.errorInput == "phone_no"
-                        ? org_entities.message
-                        : ""
-                    }
-                  />
-                  <Input
-                    type="text"
-                    name="contact_name"
-                    style="input-text"
-                    label="Contact Name"
-                    handleChange={(value) => setContact_name(value)}
-                    required={true}
-                    errorMessage={
-                      org_entities && org_entities.errorInput == "contact_name"
-                        ? org_entities.message
-                        : ""
-                    }
-                  />
-                  <Input
-                    type="email"
-                    name="contact_email"
-                    style="input-text"
-                    label="Contact Email"
-                    handleChange={(value) => setContact_email(value)}
-                    required={true}
-                    errorMessage={
-                      org_entities && org_entities.errorInput == "contact_email"
-                        ? org_entities.message
-                        : ""
-                    }
-                  />
-                  <Input
-                    type="text"
-                    name="contact_phone"
-                    style="input-text"
-                    label="Contact Phone"
-                    handleChange={(value) => setContact_phone(value)}
-                    required={true}
-                    errorMessage={
-                      org_entities && org_entities.errorInput == "contact_phone"
-                        ? org_entities.message
-                        : ""
-                    }
-                  />
-                  <Input
-                    type="text"
-                    name="no_liscence_purchase"
-                    style="input-text"
-                    label="Licence Purchase No"
-                    handleChange={(value) => setNo_liscence_purchase(value)}
-                    required={true}
-                    errorMessage={
-                      org_entities && org_entities.errorInput == "no_liscence_purchase"
-                        ? org_entities.message
-                        : ""
-                    }
-                  />
-                  <Input
-                    type="date"
-                    name="liscence_expiry"
-                    style="input-text"
-                    label="Licence Expiry"
-                    handleChange={(value) => setLiscence_expiry(value)}
-                    required={true}
-                    errorMessage={
-                      org_entities && org_entities.errorInput == "liscence_expiry"
-                        ? org_entities.message
-                        : ""
-                    }
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                >
-                  Submit
-                </button>&nbsp;
-                <button
-                  type="button"
-                  className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-                  data-bs-dismiss="modal"
-                >
-                  Cancel
-                </button>
-                
-              </form>
-            </div>
-            {/* <div
-              className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
-              <button type="button"
-                className="inline-block px-6 py-2.5 bg-purple-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-purple-700 hover:shadow-lg focus:bg-purple-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-purple-800 active:shadow-lg transition duration-150 ease-in-out"
-                data-bs-dismiss="modal">Close</button>
-              <button type="button"
-                class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md className:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out ml-1">Understood</button>
-            </div> */}
-          </div>
+              </h5>} modalBody={
+        <form className="pt-3" method="post" onSubmit={addOrgentity}>
+        <div className="grid md:grid-cols-3 md:gap-2">
+          <Input
+            type="text"
+            name="org_entity_name"
+            style="input-text"
+            label="Organization Entity Name"
+            value={org_entity_name}
+            handleChange={(value) => setOrg_entity_name(value)}
+            errorMessage={
+              org_entities &&
+              org_entities.errorInput == "org_entity_name"
+                ? org_entities.message
+                : ""
+            }
+            required={true}
+          />
+          <Input
+            type="text"
+            name="org_region"
+            style="input-text"
+            label="Organization Region"
+            value={org_region}
+            handleChange={(value) => setOrg_region(value)}
+            errorMessage={
+              org_entities && org_entities.errorInput == "org_region"
+                ? org_entities.message
+                : ""
+            }
+            required={true}
+          />
+          <Input
+            type="text"
+            name="level"
+            value={level}
+            style="input-text"
+            label="Level"
+            handleChange={(value) => setLevel(value)}
+            required={true}
+            errorMessage={
+              org_entities && org_entities.errorInput == "level"
+                ? org_entities.message
+                : ""
+            }
+          />
+          <Input
+            type="text"
+            name="street_address"
+            value={street_address}
+            style="input-text"
+            label="Street Address"
+            handleChange={(value) => setStreet_address(value)}
+            required={true}
+            errorMessage={
+              org_entities && org_entities.errorInput == "street_address"
+                ? org_entities.message
+                : ""
+            }
+          />
+          <Input
+            type="text"
+            name="state"
+            value={state}
+            style="input-text"
+            label="State"
+            handleChange={(value) => setState(value)}
+            required={true}
+            errorMessage={
+              org_entities && org_entities.errorInput == "state"
+                ? org_entities.message
+                : ""
+            }
+          />
+          <Input
+            type="text"
+            name="country"
+            value={country}
+            style="input-text"
+            label="Country"
+            handleChange={(value) => setCountry(value)}
+            required={true}
+            errorMessage={
+              org_entities && org_entities.errorInput == "country"
+                ? org_entities.message
+                : ""
+            }
+          />
+          <Input
+            type="number"
+            name="zip_code"
+            value={zip_code}
+            style="input-text"
+            label="Zip Code"
+            handleChange={(value) => setZip_code(value)}
+            required={true}
+            errorMessage={
+              org_entities && org_entities.errorInput == "zip_code"
+                ? org_entities.message
+                : ""
+            }
+          />
+          <Input
+            type="text"
+            name="phone_no"
+            value={phone_no}
+            style="input-text"
+            label="Phone No"
+            handleChange={(value) => setPhone_no(value)}
+            required={true}
+            errorMessage={
+              org_entities && org_entities.errorInput == "phone_no"
+                ? org_entities.message
+                : ""
+            }
+          />
+          <Input
+            type="text"
+            name="contact_name"
+            value={contact_name}
+            style="input-text"
+            label="Contact Name"
+            handleChange={(value) => setContact_name(value)}
+            required={true}
+            errorMessage={
+              org_entities && org_entities.errorInput == "contact_name"
+                ? org_entities.message
+                : ""
+            }
+          />
+          <Input
+            type="email"
+            name="contact_email"
+            value={contact_email}
+            style="input-text"
+            label="Contact Email"
+            handleChange={(value) => setContact_email(value)}
+            required={true}
+            errorMessage={
+              org_entities && org_entities.errorInput == "contact_email"
+                ? org_entities.message
+                : ""
+            }
+          />
+          <Input
+            type="text"
+            name="contact_phone"
+            value={contact_phone}
+            style="input-text"
+            label="Contact Phone"
+            handleChange={(value) => setContact_phone(value)}
+            required={true}
+            errorMessage={
+              org_entities && org_entities.errorInput == "contact_phone"
+                ? org_entities.message
+                : ""
+            }
+          />
+          <Input
+            type="text"
+            name="no_liscence_purchase"
+            value={no_liscence_purchase}
+            style="input-text"
+            label="Licence Purchase No"
+            handleChange={(value) => setNo_liscence_purchase(value)}
+            required={true}
+            errorMessage={
+              org_entities && org_entities.errorInput == "no_liscence_purchase"
+                ? org_entities.message
+                : ""
+            }
+          />
+          <Input
+            type="date"
+            name="liscence_expiry"
+            value={liscence_expiry}
+            style="input-text"
+            label="Licence Expiry"
+            handleChange={(value) => setLiscence_expiry(value)}
+            required={true}
+            errorMessage={
+              org_entities && org_entities.errorInput == "liscence_expiry"
+                ? org_entities.message
+                : ""
+            }
+          />
         </div>
-      </div>
+        <button
+          type="submit"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Submit
+        </button>&nbsp;
+        <button
+          type="button"
+          className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+          data-bs-dismiss="modal"
+        >
+          Cancel
+        </button>
+        
+      </form>
+      } modalFooter={''} />
     </>
   );
 };

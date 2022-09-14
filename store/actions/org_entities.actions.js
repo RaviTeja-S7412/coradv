@@ -1,20 +1,22 @@
 import { orgentityConstants } from './constants'
 import axios from '../axios'
+import axiosIntance from '../axios'
 
 export const createOrgentity = (udata) => {
   return async (dispatch) => {
     dispatch({ type: orgentityConstants.SAVE_ORGENTITY_REQUEST })
-    const res = await axios.post(`/admin/org_entities`, udata)
+    udata["action"] = "CREATE";
+    const res = await axiosIntance(`/api/admin/org_entities`, udata, 'post')
 
     if (res.status === 200) {
       dispatch({
         type: orgentityConstants.SAVE_ORGENTITY_SUCCESS,
-        payload: { message: res.data.message },
+        payload: { data: res.message },
       })
     } else {
       dispatch({
         type: orgentityConstants.SAVE_ORGENTITY_FAILURE,
-        payload: { message: res.data.message, input: res.data.input },
+        payload: { message: res.message, input: res.input },
       })
     }
   }
@@ -61,35 +63,37 @@ export const deleteEmployee = (udata) => {
 export const getOrgentities = (data) => {
   return async (dispatch) => {
     dispatch({ type: orgentityConstants.GET_ORGENTITIES_REQUEST })
-    const res = await axios.get('/admin/org_entities?page='+data.page+'&perPage='+data.perPage+'&search='+data.search)
+    data["action"] = "GET";
+    const res = await axiosIntance('/api/admin/org_entities', data, 'post');
     if (res.status === 200) {
       dispatch({
         type: orgentityConstants.GET_ORGENTITIES_SUCCESS,
-        payload: res.data,
+        payload: res,
       })
     } else {
       dispatch({
         type: orgentityConstants.GET_ORGENTITIES_FAILURE,
-        payload: { message: res.data.message },
+        payload: { message: res.message },
       })
     }
   }
 }
 
-export const get_singleemployee = (udata) => {
+export const get_singleentity = (udata) => {
   return async (dispatch) => {
-    dispatch({ type: orgentityConstants.GET_SINGLEEMPLOYEE_REQUEST })
-    const res = await axios.post(`/admin/get_singleemployee`, udata)
+    dispatch({ type: orgentityConstants.GET_SINGLEORGENTITY_REQUEST })
+    udata['action'] = 'SINGLE';
+    const res = await axiosIntance(`/api/admin/org_entities`, udata, 'post')
 
     if (res.status === 200) {
       dispatch({
-        type: orgentityConstants.GET_SINGLEEMPLOYEE_SUCCESS,
-        payload: res.data.employee_data,
+        type: orgentityConstants.GET_SINGLEORGENTITY_SUCCESS,
+        payload: res.entity_data,
       })
     } else {
       if (res.status === 202) {
         dispatch({
-          type: orgentityConstants.GET_SINGLEEMPLOYEE_FAILURE,
+          type: orgentityConstants.GET_SINGLEORGENTITY_FAILURE,
           payload: { message: res.data.message },
         })
       }

@@ -19,11 +19,20 @@ function Topbar(prop) {
     localStorage.clear();
     Router.push("/login");
   };
+  const profile = () => {
+    
+  }
+  const settings = () => {
+
+  }
+  const help = () => {
+
+  }
 
   const navigation = [
-    { Icon: <UserCircleIcon className="h-4 w-4" />, name: 'User Profile', href: '#', current: true, click: "" },
-    { Icon: <CogIcon className="h-4 w-4" />, name: 'Settings', href: '#', current: false, click: "" },
-    { Icon: <InformationCircleIcon className="h-4 w-4" />, name: 'Help', href: '#', current: false, click: "" },
+    { Icon: <UserCircleIcon className="h-4 w-4" />, name: 'User Profile', href: '#', current: true, click: profile },
+    { Icon: <CogIcon className="h-4 w-4" />, name: 'Settings', href: '#', current: false, click: settings },
+    { Icon: <InformationCircleIcon className="h-4 w-4" />, name: 'Help', href: '#', current: false, click: help },
     { Icon: <LogoutIcon className="h-4 w-4" />, name: 'Logout', href: '#', current: false, click: logout },
   ]
 

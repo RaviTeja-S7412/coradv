@@ -129,22 +129,22 @@ export default (state = initState, action) => {
         message: action.payload.message,
       }
       break
-    case orgentityConstants.GET_SINGLEUSER_REQUEST:
+    case orgentityConstants.GET_SINGLEORGENTITY_REQUEST:
       state = {
         ...state,
         loading: true,
         get_singleorg_entity: true,
       }
       break
-    case orgentityConstants.GET_SINGLEUSER_SUCCESS:
+    case orgentityConstants.GET_SINGLEORGENTITY_SUCCESS:
       state = {
         ...state,
         loading: false,
         get_singleorg_entity: false,
-        org_entity_data: action.payload,
+        entity_data: action.payload,
       }
       break
-    case orgentityConstants.GET_SINGLEUSER_FAILURE:
+    case orgentityConstants.GET_SINGLEORGENTITY_FAILURE:
       state = {
         ...state,
         loading: false,
