@@ -28,7 +28,6 @@ const Onboard = () => {
   const [searchText, setSearchtext] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageChange, setPagechange] = useState(false);
-  const [open, setOpen] = useState(true);
 
   const [userData, setUserdata] = useState([]);
   const [org_entity_name, setOrg_entity_name] = useState("");
@@ -50,8 +49,10 @@ const Onboard = () => {
   const Router = useRouter();
 
   const handleEdit = (id) => {
+    setLoading(true);
     setModallabel("Update")
     dispatch(get_singleentity({id:id}))
+    setLoading(false)
   }
 
   const handleCreate = () => {
@@ -306,6 +307,8 @@ const Onboard = () => {
         <div className="text-white ml-auto mr-5 text-right rounded">
           <button
             className="rounded-full index-add-btn p-3"
+            data-mdb-ripple="true"
+            data-mdb-ripple-color="light"
             data-bs-toggle="modal"
             data-bs-target="#staticBackdrop"
             onClick={handleCreate}
@@ -507,8 +510,8 @@ const Onboard = () => {
             }
           />
         </div>
-        <Button type="submit" color="blue" title="Submit" />&nbsp;
-        <Button type="button" color="red" title="Cancel" modal={true}  />
+        <Button type="submit" bcolor="blue" title="Submit" />&nbsp;
+        <Button type="button" bcolor="red" title="Cancel" modalclose={true}  />
         {/* <button
           type="button"
           className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
