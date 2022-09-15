@@ -6,6 +6,8 @@ import {
   getOrgentities,
   createOrgentity,
   get_singleentity,
+  updateOrgentity,
+  deleteOrgentity,
 } from "../../store/actions/org_entities.actions";
 import { Search, Pagination } from "../../Components/datatables";
 import { PencilIcon, TrashIcon, PlusIcon } from "@heroicons/react/outline";
@@ -14,6 +16,7 @@ import Input from "../../Components/Input";
 import Link from "next/link";
 import { useRouter } from 'next/router'
 import Modal from "../../Components/Modal";
+import Button from "../../Components/Button";
 
 const Onboard = () => {
   const dispatch = useDispatch();
@@ -21,6 +24,7 @@ const Onboard = () => {
   const [loading, setLoading] = useState(false);
   const [totalRows, setTotalRows] = useState(0);
   const [perPage, setPerPage] = useState(10);
+  const [modallabel, setModallabel] = useState("Create");
   const [searchText, setSearchtext] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageChange, setPagechange] = useState(false);
@@ -40,12 +44,55 @@ const Onboard = () => {
   const [contact_phone, setContact_phone] = useState("");
   const [no_liscence_purchase, setNo_liscence_purchase] = useState("");
   const [liscence_expiry, setLiscence_expiry] = useState("");
+  const [entity_id, setEntity_id] = useState("");
 
   const org_entities = useSelector((state) => state.org_entities);
   const Router = useRouter();
 
   const handleEdit = (id) => {
+    setModallabel("Update")
     dispatch(get_singleentity({id:id}))
+  }
+
+  const handleCreate = () => {
+    setModallabel("Create")
+    setOrg_entity_name("");
+    setOrg_region("");
+    setLevel("");
+    setStreet_address("");
+    setState("");
+    setCountry("");
+    setZip_code("");
+    setPhone_no("");
+    setContact_name("");
+    setContact_email("");
+    setContact_phone("");
+    setNo_liscence_purchase("");
+    setLiscence_expiry("");
+    setEntity_id("");
+  }
+
+  const handleDelete = (id) => {
+
+    swal({
+      title: "Are you sure?",
+      text: "Want to delete this Organization Entity.",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    })
+    .then((willDelete) => {
+      if (willDelete) {
+        swal("Organization Entity has been deleted!", {
+          icon: "success",
+        });
+        dispatch(deleteOrgentity({entity_id:id}))
+        setPagechange(false);
+      } else {
+        swal("Organization Entity is safe!");
+      }
+    });
+
   }
 
   useEffect(() => {
@@ -59,14 +106,13 @@ const Onboard = () => {
       setZip_code(org_entities.entity_data && org_entities.entity_data.zip_code);
       setPhone_no(org_entities.entity_data && org_entities.entity_data.phone_no);
       setContact_name(org_entities.entity_data && org_entities.entity_data.contact_name);
+      setContact_email(org_entities.entity_data && org_entities.entity_data.contact_email);
       setContact_phone(org_entities.entity_data && org_entities.entity_data.contact_phone);
-      setNo_liscence_purchase(org_entities.entity_data && org_entities.entity_data.no_liscence_purchase);
-      setLiscence_expiry(org_entities.entity_data && org_entities.entity_data.liscence_expiry);
+      setNo_liscence_purchase(org_entities.entity_data && org_entities.entity_data.no_licence_purchased);
+      setLiscence_expiry(org_entities.entity_data && org_entities.entity_data.licence_expiry);
+      setEntity_id(org_entities.entity_data && org_entities.entity_data._id);
     }
   },[org_entities.get_singleorg_entity]);
-
-  const handleDelete = () => {
-  }
 
   const columns = useMemo(
     () => [
@@ -168,7 +214,6 @@ const Onboard = () => {
   useEffect(() => {
     if (org_entities.get_org_entities && !pageChange) {
       fetchUsers(currentPage);
-      console.log("in")
     } else {
       const displayColumns = [
         "id",
@@ -219,9 +264,15 @@ const Onboard = () => {
       contact_phone: contact_phone,
       no_licence_purchased: no_liscence_purchase,
       licence_expiry: liscence_expiry,
-      created_by: userData.user_id,
     };
-    dispatch(createOrgentity(fdata));
+    if(entity_id){
+      fdata['modified_by'] = userData.user_id;
+      fdata['entity_id'] = entity_id;
+      dispatch(updateOrgentity(fdata));
+    }else{
+      fdata['created_by'] = userData.user_id;
+      dispatch(createOrgentity(fdata));
+    }
     setPagechange(false);
   };
 
@@ -257,6 +308,7 @@ const Onboard = () => {
             className="rounded-full index-add-btn p-3"
             data-bs-toggle="modal"
             data-bs-target="#staticBackdrop"
+            onClick={handleCreate}
           >
             <PlusIcon className="text-white w-5 h-5 rte-cls" />
           </button>
@@ -267,7 +319,7 @@ const Onboard = () => {
                 className="text-xl font-medium leading-normal text-gray-800"
                 id="exampleModalLabel"
               >
-                Create Organization Entity
+                {modallabel} Organization Entity
               </h5>} modalBody={
         <form className="pt-3" method="post" onSubmit={addOrgentity}>
         <div className="grid md:grid-cols-3 md:gap-2">
@@ -455,19 +507,15 @@ const Onboard = () => {
             }
           />
         </div>
-        <button
-          type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Submit
-        </button>&nbsp;
-        <button
+        <Button type="submit" color="blue" title="Submit" />&nbsp;
+        <Button type="button" color="red" title="Cancel" modal={true}  />
+        {/* <button
           type="button"
           className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
           data-bs-dismiss="modal"
         >
           Cancel
-        </button>
+        </button> */}
         
       </form>
       } modalFooter={''} />

@@ -88,6 +88,7 @@ export default (state = initState, action) => {
         get_org_entities: true,
         is_org_entity_added: true,
         message: action.payload.message,
+        
       }
       break
     case orgentityConstants.DELETE_ORGENTITY_FAILURE:
