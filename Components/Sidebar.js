@@ -49,7 +49,7 @@ function Sidebar(props) {
   const mobileMenu = [
     { Icon: <UserCircleIcon style={{ width: "30px", paddingRight: "10px" }} />, name: 'User Profile', href: '#', current: true, click: profile },
     { Icon: <CogIcon style={{ width: "30px", paddingRight: "10px" }} />, name: 'Settings', href: '#', current: false, click: settings },
-    { Icon: <InformationCircleIcon style={{ width: "30px", paddingRight: "10px" }} />, name: 'Help', href: '#', current: false, help: settings },
+    { Icon: <InformationCircleIcon style={{ width: "30px", paddingRight: "10px" }} />, name: 'Help', href: '#', current: false, click: help },
     { Icon: <LogoutIcon style={{ width: "30px", paddingRight: "10px" }} />, name: 'Logout', href: '#', current: false, click: logout },
   ]
 
