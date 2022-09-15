@@ -18,6 +18,7 @@ import { useRouter } from "next/router";
 import Modal from "../../Components/Modal";
 import Button from "../../Components/Button";
 import Spinner from "../../Components/Spinner";
+import ArrowCircleUpIconTray from "../../Components/icons/ArrowCircleUpIconTray";
 
 const Onboard = () => {
   const dispatch = useDispatch();
@@ -305,6 +306,7 @@ const Onboard = () => {
     <>
       <Layout>
         <div className="card mb-5 mt-0 mx-5 p-0 h-70 overflow-y-hidden">
+          
           <DataTable
             title="Onboard Programs"
             columns={columns}
@@ -320,10 +322,17 @@ const Onboard = () => {
             onChangePage={handlePageChange}
             subHeader
             subHeaderComponent={
-              <Search
-                submitFunction={searchData}
-                setSearchtext={setSearchtext}
-              />
+              <>
+                {/* <button
+                  className="rounded-full float-left inline-block px-2 py-2 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+                  data-mdb-ripple="true"
+                  data-mdb-ripple-color="light">
+                  <ArrowCircleUpIconTray />
+                </button> */}
+                <Search
+                  submitFunction={searchData}
+                  setSearchtext={setSearchtext} />
+              </>
             }
             // customStyles={customStyles}
           />
@@ -546,7 +555,7 @@ const Onboard = () => {
               &nbsp;
               <Button
                 type="button"
-                bcolor="red"
+                bcolor="blue"
                 title="Cancel"
                 modalclose={true}
               />
