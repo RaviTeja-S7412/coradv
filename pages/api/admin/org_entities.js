@@ -152,19 +152,6 @@ async function createOrgentity(req,res){
         "contact_phone":req.body.contact_phone,
         "no_licence_purchased":req.body.no_licence_purchased,
         "licence_expiry":req.body.licence_expiry,
-<<<<<<< HEAD
-=======
-    }
-
-    if(req.body.action == "UPDATE"){
-        data["modified_on"] = new Date();
-        data["modified_by"] = req.body.created_by;
-    }else{
-        data["created_by"] = req.body.created_by;
-        data["created_on"] = new Date();
-        data["date_started"] = new Date();
-        data["is_deleted"] = 0;
->>>>>>> 35099dd57026d012dc23ce222992b9678e49f540
     }
 
     if(req.body.action == "UPDATE"){
@@ -178,7 +165,6 @@ async function createOrgentity(req,res){
     }
     const org_entities = await db.collection("ca_org_entities"); 
 
-<<<<<<< HEAD
     org_entities.aggregate([{ "$sort": { '_id' : -1 } }, { $limit: 1 }]).toArray(function(lerr, lresult){
 
         var org_id = "";
@@ -188,15 +174,6 @@ async function createOrgentity(req,res){
             org_id = ldata['org_entity_id']+1;
         }else{
             org_id = 10000;
-=======
-    org_entities.find({ org_entity_name: req.body.org_entity_name }).toArray((error, result) => {
-        if (result.length > 0 && result._id != req.body.entity_id) {
-            return res.status(202).json({
-                status: 400,
-                message: 'Organization Entity Name Already Exists.',
-                input: "org_entity_name"
-            });
->>>>>>> 35099dd57026d012dc23ce222992b9678e49f540
         }
 
         if(req.body.action == "UPDATE"){
@@ -220,8 +197,14 @@ async function createOrgentity(req,res){
         }else{
 
             data["org_entity_id"] = org_id;
+            org_entities.insertOne(data, function (error, result) {
+                if (error) {
+                    return res.status(202).json({
+                        status: 400,
+                        message: 'error occured'
+                    });
+                }
 
-<<<<<<< HEAD
                 if (result) {
                     return res.status(200).json({
                         status: 200,
@@ -229,51 +212,8 @@ async function createOrgentity(req,res){
                     })
                 }
             });
-
+        
         }
-=======
-            if(req.body.action == "UPDATE"){
-
-                org_entities.updateOne({_id:new ObjectId(req.body.entity_id)}, {$set: data}, function (error, result) {
-
-                    if (error) {
-                        return res.status(202).json({
-                            status: 400,
-                            message: 'error occured'
-                        });
-                    }
-    
-                    if (result) {
-                        
-                        return res.status(200).json({
-                            status: 200,
-                            message: "Updated Successfully"
-                        })
-                    }
-                });
-
-            }else{
-
-                org_entities.insertOne(data, function (error, result) {
-                    if (error) {
-                        return res.status(202).json({
-                            status: 400,
-                            message: 'error occured'
-                        });
-                    }
-
-                    if (result) {
-                        
-                        return res.status(200).json({
-                            status: 200,
-                            message: "Created Successfully"
-                        })
-                    }
-                });
-
-            }
-        });
->>>>>>> 35099dd57026d012dc23ce222992b9678e49f540
     });
 }
 
