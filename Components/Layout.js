@@ -13,11 +13,11 @@ const Layout = ({ children }) => {
   url = router.pathname.replace("/", "");
   url = url.replace("-", " ");
 
-  let styleClass = "flex w-full h-16 bg-[#43B02A] justify-start";
+  let styleClass = "flex w-full bg-[#43B02A] justify-start";
   if (url === "assessments") {
-    styleClass = "flex w-full h-16 bg-[#43B02A] justify-start";
+    styleClass = "flex w-full bg-[#43B02A] justify-start";
   } else if (url === "moments") {
-    styleClass = "flex w-full h-16 bg-[#e93cac] justify-start";
+    styleClass = "flex w-full bg-[#e93cac] justify-start";
   }
 
   const [toggleCollapse, setToggleCollapse] = useState(false);
