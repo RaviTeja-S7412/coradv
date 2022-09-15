@@ -12,7 +12,7 @@ function Userbar(prop) {
                 <div className="userbar-background">
                     <Menu as="div" className="relative">
                         <div>
-                            <div className="flex text-lg justify-center">
+                            <div className="flex text-lg justify-end pr-5 text-left mr-2">
                                 {user.map((item) => (
                                     <a
                                         key={item.name}
