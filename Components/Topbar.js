@@ -15,12 +15,14 @@ import { ToastContainer } from "react-toastify";
 
 function Topbar(prop) {
 
+  const [open, setOpen] = useState(false);
+
   const logout = () => {
     localStorage.clear();
     Router.push("/login");
   };
   const profile = () => {
-    
+
   }
   const settings = () => {
 
@@ -38,71 +40,31 @@ function Topbar(prop) {
 
   return (
     <>
-      <ToastContainer />
-      <span className="self-center text-xl font-semibold whitespace-nowrap text-white ml-2 capitalize">
-        {prop.name}
-      </span>
-      <Disclosure as="nav" className="ml-auto bg-gray-00">
-        {({ open }) => (
-          <>
-            <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-              <div className="relative flex h-16 items-center justify-between">
-                <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                  {/* Mobile menu button*/}
-                  <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                    <span className="sr-only">Open main menu</span>
-                    {open ? (
-                      <BellIcon className="block h-6 w-6" aria-hidden="true" />
-                    ) : (
-                      <BellIcon className="block h-6 w-6" aria-hidden="true" />
-                    )}
-                  </Disclosure.Button>
-                </div>
-                <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                  <div className="hidden sm:ml-6 sm:block">
-                    <div className="flex space-x-3">
-                      {navigation.map((item) => (
-                        <a
-                          key={item.name}
-                          href={item.href}
-                          className={classNames(
-                            item.current ? 'text-white' : 'text-white',
-                            'px-3 py-2 text-xs font-medium onboard-program-navigation'
-                          )}
-                          onClick={item.click}
-                          aria-current={item.current ? 'page' : undefined}
-                        >
-                          {item.Icon}&nbsp;{item.name}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <Disclosure.Panel className="sm:hidden">
-              <div className="space-y-1 px-2 pt-2 pb-3">
-                {navigation.map((item) => (
-                  <Disclosure.Button
-                    key={item.name}
-                    as="a"
-                    href={item.href}
-                    className={classNames(
-                      item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                      'block px-3 py-2 rounded-md text-base font-medium'
-                    )}
-                    onClick={item.click}
-                    aria-current={item.current ? 'page' : undefined}
-                  >
-                    {item.name}
-                  </Disclosure.Button>
-                ))}
-              </div>
-            </Disclosure.Panel>
-          </>
-        )}
-      </Disclosure>
+      <header className="py-3 w-full">
+        <div className="flex items-center justify-between xl:max-w-[95%] xl:mx-auto max-w-full flex-wrap w-full">
+          <span className="self-center text-xl font-semibold whitespace-nowrap text-white ml-2 capitalize">
+            {prop.name}
+          </span>
+          {/* <img src="http://coradvantage.com/wp-content/uploads/2018/10/cor4-e1597326316416.png" width={220} height={55} /> */}
+          {/* <MenuIcon className="lg:hidden block h-6 w-5 cursor-pointer" onClick={() => setOpen(!open)} /> */}
+          <nav className={`${open ? "block" : "hidden"} w-full md:flex md:item-center md:w-auto`}>
+            <ul className="text-base text-gray-600 md:flex lg:justify-between space-x-3">
+              <li>
+                <a className="lg:px-3 block text-white px-3 py-2 text-xs font-medium onboard-program-navigation" href="#"><UserCircleIcon className="h-4 w-4" /> User Profile</a>
+              </li>
+              <li>
+                <a className="lg:px-3 block text-white px-3 py-2 text-xs font-medium onboard-program-navigation" href="#"><CogIcon className="h-4 w-4" /> Settings</a>
+              </li>
+              <li>
+                <a className="lg:px-3 block text-white px-3 py-2 text-xs font-medium onboard-program-navigation" href="#"><InformationCircleIcon className="h-4 w-4" /> Help</a>
+              </li>
+              <li>
+                <a className="lg:px-3 block text-white px-3 py-2 text-xs font-medium onboard-program-navigation" href="#"><LogoutIcon className="h-4 w-4" /> Logout</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
     </>
   );
 }
