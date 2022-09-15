@@ -36,11 +36,20 @@ function Sidebar(props) {
     localStorage.clear();
     Router.push("/login");
   };
+  const profile = () => {
+
+  }
+  const settings = () => {
+
+  }
+  const help = () => {
+
+  }
 
   const mobileMenu = [
-    { Icon: <UserCircleIcon style={{ width: "30px", paddingRight: "10px" }} />, name: 'User Profile', href: '#', current: true, click: "" },
-    { Icon: <CogIcon style={{ width: "30px", paddingRight: "10px" }} />, name: 'Settings', href: '#', current: false, click: "" },
-    { Icon: <InformationCircleIcon style={{ width: "30px", paddingRight: "10px" }} />, name: 'Help', href: '#', current: false, click: "" },
+    { Icon: <UserCircleIcon style={{ width: "30px", paddingRight: "10px" }} />, name: 'User Profile', href: '#', current: true, click: profile },
+    { Icon: <CogIcon style={{ width: "30px", paddingRight: "10px" }} />, name: 'Settings', href: '#', current: false, click: settings },
+    { Icon: <InformationCircleIcon style={{ width: "30px", paddingRight: "10px" }} />, name: 'Help', href: '#', current: false, help: settings },
     { Icon: <LogoutIcon style={{ width: "30px", paddingRight: "10px" }} />, name: 'Logout', href: '#', current: false, click: logout },
   ]
 
