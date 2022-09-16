@@ -141,6 +141,77 @@ const Onboard = () => {
     }
   }, [org_entities.get_singleorg_entity]);
 
+/*   const columns = useMemo(
+    () => [
+      {
+        name: "Action",
+        cell: (row) => (
+          <>
+            <PencilIcon
+              className="nav-icon favicon w-5 h-5 mr-1 stroke-blue-500 cursor-pointer"
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop"
+              onClick={() => handleEdit(row.id)}
+            />
+            <TrashIcon
+              className="nav-icon favicon w-5 h-5 ml-1 stroke-red-500 cursor-pointer"
+              onClick={() => handleDelete(row.id)}
+            />
+          </>
+        ),
+        grow: 0.5,
+      },
+      {
+        name: "S.No",
+        selector: (row) => `${row.serial}`,
+        sortable: true,
+        width: "100px",
+      },
+      {
+        name: "Org ID",
+        selector: (row) => `${row.org_id}`,
+        sortable: true,
+        width: "100px",
+      },
+      {
+        name: "Org Name",
+        selector: (row) => `${row.org_name}`,
+        sortable: true,
+      },
+      {
+        name: "Org Hirarchy",
+        selector: (row) => `${row.org_name}`,
+        sortable: true,
+      },
+      {
+        name: "Location",
+        selector: (row) => `${row.location}`,
+        sortable: true,
+      },
+      {
+        name: "Users",
+        cell: (row) => (
+          <span className="font-medium text-sky-700 cursor-pointer bg-slate-200 px-2 py-2 rounded shadow-lg flex">
+            <PlusCircleIcon className="w-5 h-5" /> &nbsp; Add Users
+          </span>
+        ),
+        sortable: true,
+      },
+      {
+        name: "Centers",
+        cell: (row) => (
+          <Link href="#">
+            <span className="font-medium text-sky-700 cursor-pointer px-4 py-2 underline">
+              Add Centers
+            </span>
+          </Link>
+        ),
+        sortable: true,
+      },
+    ],
+    []
+  ); */
+
   const handlePageChange = (page) => {
     fetchUsers(page);
     setCurrentPage(page);
@@ -294,6 +365,36 @@ const Onboard = () => {
             />
           </div>
 
+          
+          {/* <DataTable
+            title="Onboard Programs"
+            columns={columns}
+            data={data}
+            progressPending={loading}
+            // progressComponent={<CustomLoader />}
+            pagination
+            paginationServer
+            paginationTotalRows={totalRows}
+            paginationDefaultPage={currentPage}
+            onChangeRowsPerPage={handlePerRowsChange}
+            paginationRowsPerPageOptions={[10, 20, 30, 40, 50, 100]}
+            onChangePage={handlePageChange}
+            subHeader
+            subHeaderComponent={
+              <>
+                {/* <button
+                  className="rounded-full float-left inline-block px-2 py-2 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+                  data-mdb-ripple="true"
+                  data-mdb-ripple-color="light">
+                  <ArrowCircleUpIconTray />
+                </button> 
+                <Search
+                  submitFunction={searchData}
+                  setSearchtext={setSearchtext} />
+              </>
+            }
+            // customStyles={customStyles}
+          /> */}
         </div>
         <div className="text-white ml-auto mr-5 text-right rounded">
           <button

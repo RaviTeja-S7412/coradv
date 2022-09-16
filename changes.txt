@@ -1,0 +1,19 @@
+// Tailwind elements
+
+npm install tw-elements --save
+
+tailwind.config
+module.exports = {
+  content: ['./src/**/*.{html,js}', './node_modules/tw-elements/dist/js/**/*.js'],
+  plugins: [
+    require('tw-elements/dist/plugin')
+  ]
+}
+
+import 'tw-elements'; in _app.js
+
+// mui data-grid
+
+npm install @mui/x-data-grid
+npm install @mui/material @emotion/react @emotion/styled
+npm install @mui/material @mui/styled-engine-sc styled-components

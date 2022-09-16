@@ -59,7 +59,7 @@ function Topbar(prop) {
                 <a className="lg:px-3 block text-white px-3 py-2 text-xs font-medium onboard-program-navigation" href="#"><InformationCircleIcon className="h-4 w-4" /> Help</a>
               </li>
               <li>
-                <a className="lg:px-3 block text-white px-3 py-2 text-xs font-medium onboard-program-navigation" href="#"><LogoutIcon className="h-4 w-4" /> Logout</a>
+                <a className="lg:px-3 block text-white px-3 py-2 text-xs font-medium onboard-program-navigation cursor-pointer" onClick={logout}><LogoutIcon className="h-4 w-4" /> Logout</a>
               </li>
             </ul>
           </nav>
