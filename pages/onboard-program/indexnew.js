@@ -1,38 +1,27 @@
-import * as React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
-import { createFakeServer } from '@mui/x-data-grid-generator';
-import {
-  getOrgentities
-} from "../../store/actions/org_entities.actions";
-import { useDispatch, useSelector } from 'react-redux';
-import {  Pagination } from "../../Components/datatables";
-
-const SERVER_OPTIONS = {
-  useCursorPagination: false,
-};
-
-const { columns, initialState, useQuery } = createFakeServer({}, SERVER_OPTIONS);
+import * as React from "react";
+import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
+import { getOrgentities } from "../../store/actions/org_entities.actions";
+import { useDispatch, useSelector } from "react-redux";
+import { Pagination } from "../../Components/datatables";
+import { DeleteOutline, EditOutlined } from "@mui/icons-material";
 
 export default function ServerPaginationGrid() {
 
-  const [page, setPage] = React.useState(0);
-  const [pageSize, setPageSize] = React.useState(10);
+  const [pageState, setPageState] = React.useState({
+    isLoading: false,
+    data: [],
+    total: 0,
+    page: 1,
+    pageSize: 2
+  })
+
   const org_entities = useSelector((state) => state.org_entities);
   const dispatch = useDispatch();
 
-  const queryOptions = React.useMemo(
-    () => ({
-      page,
-      pageSize,
-    }),
-    [page, pageSize],
-  );
-
-  const { isLoading, data, pageInfo } = useQuery(queryOptions);
-
   React.useEffect(() => {
-    if (org_entities.get_org_entities) {
-      fetchUsers(page);
+    if (org_entities.get_org_entities && !pageState.isLoading) {
+      setPageState(old => ({ ...old, isLoading: true }))
+      fetchUsers(pageState.page);
     } else {
       const displayColumns = [
         "id",
@@ -44,55 +33,70 @@ export default function ServerPaginationGrid() {
       var udata = Pagination(
         org_entities.org_entities,
         org_entities.nextPage,
-        page,
-        pageSize,
+        pageState.page,
+        pageState.pageSize,
         displayColumns
       );
-      setData(udata);
-      setTotalRows(org_entities.total_count);
+      setPageState(old => ({ ...old, isLoading: false, data: udata, total: org_entities.total_count }));
     }
-  }, [org_entities.get_org_entities]);
+  }, [pageState.page, pageState.pageSize, org_entities.get_org_entities]);
 
-  const fetchUsers = (page1, size = pageSize) => {
-    // setLoading(true);
+  const fetchUsers = (page1, size = pageState.pageSize) => {
     const post_data = {
       page: page1,
       perPage: size,
-      // search: search,
+      search: "",
     };
     dispatch(getOrgentities(post_data));
-    // setLoading(false);
   };
 
-  // Some API clients return undefined while loading
-  // Following lines are here to prevent `rowCountState` from being undefined during the loading
-  const [rowCountState, setRowCountState] = React.useState(
-    pageInfo?.totalRowCount || 0,
-  );
+  const columns = [
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: "Action",
+      width: 80,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<EditOutlined />}
+          label="Delete"
+          // onClick={deleteUser(params.id)}
+        />,
+        <GridActionsCellItem
+          icon={<DeleteOutline />}
+          label="Delete"
+          // onClick={deleteUser(params.id)}
+        />
+      ],
+    },
+    { field: "serial", headerName: "S.No" },
+    { field: "org_id", headerName: "Org ID" },
+    { field: "org_name", headerName: "Organization Name", width: 200 },
+    { field: "org_hirarchy", headerName: "Organization Hirarchy", width: 200 },
+    { field: "location", headerName: "Location" },
+  ];
 
-  React.useEffect(() => {
-    setRowCountState((prevRowCountState) =>
-      pageInfo?.totalRowCount !== undefined
-        ? pageInfo?.totalRowCount
-        : prevRowCountState,
-    );
-  }, [pageInfo?.totalRowCount, setRowCountState]);
 
   return (
-    <div style={{ height: 400, width: '100%' }}>
+    <div style={{ height: 400, width: "100%" }}>
       <DataGrid
-        rows={data}
-        rowCount={rowCountState}
-        loading={isLoading}
-        rowsPerPageOptions={[10]}
+        rows={pageState.data}
+        rowCount={pageState.total}
+        loading={pageState.isLoading}
+        rowsPerPageOptions={[10, 30, 50, 70, 100]}
         pagination
-        page={page}
-        pageSize={pageSize}
+        page={pageState.page - 1}
+        pageSize={pageState.pageSize}
         paginationMode="server"
-        onPageChange={(newPage) => setPage(newPage)}
-        onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+        onPageChange={(newPage) => {
+          setPageState(old => ({ ...old, page: newPage + 1 }))
+          fetchUsers(newPage + 1)
+        }}
+        onPageSizeChange={(newPageSize) => {
+          setPageState(old => ({ ...old, pageSize: newPageSize }))
+          fetchUsers(pageState.page, newPageSize)
+        }}
         columns={columns}
-        initialState={initialState}
       />
     </div>
   );

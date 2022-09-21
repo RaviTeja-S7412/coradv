@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Spinner from '../Components/Spinner'
 import { wrapper, store } from "../store/store";
 import { Provider } from "react-redux";
+import swal from "sweetalert";
 
 
 function MyApp({ Component, pageProps }) {
@@ -30,7 +31,7 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
     var t = localStorage.getItem("token");
     setToken(t)
-    if (!token) {
+    if (!t) {
       Router.push("/login");
     }
   }, [token]);

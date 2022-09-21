@@ -1,5 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import DataTable from "react-data-table-component";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Layout from "../../Components/Layout";
 import {
@@ -9,32 +8,33 @@ import {
   updateOrgentity,
   deleteOrgentity,
 } from "../../store/actions/org_entities.actions";
-import { Search, Pagination } from "../../Components/datatables";
-import { PencilIcon, TrashIcon, PlusIcon, PlusCircleIcon } from "@heroicons/react/outline";
-import { Dialog, Transition } from "@headlessui/react";
+import { Pagination } from "../../Components/datatables";
+import { PlusIcon } from "@heroicons/react/outline";
 import Input from "../../Components/Input";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import Modal from "../../Components/Modal";
 import Button from "../../Components/Button";
 import Spinner from "../../Components/Spinner";
-import ArrowCircleUpIconTray from "../../Components/icons/ArrowCircleUpIconTray";
 
  // datagrid
-import { DataGrid, GridToolbar  } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar, GridActionsCellItem  } from '@mui/x-data-grid';
+import { DeleteOutline, EditOutlined } from "@mui/icons-material";
 
 const Onboard = () => {
   const dispatch = useDispatch();
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false); 
-  const [totalRows, setTotalRows] = useState(0);
-  const [perPage, setPerPage] = useState(10);
+  
   const [modallabel, setModallabel] = useState("Create");
-  const [searchText, setSearchtext] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageChange, setPagechange] = useState(false);
+
+  const [pageState, setPageState] = useState({
+    isLoading: false,
+    data: [],
+    total: 0,
+    page: 1,
+    pageSize: 10
+  })
 
   const [userData, setUserdata] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [org_entity_name, setOrg_entity_name] = useState("");
   const [org_region, setOrg_region] = useState("");
   const [level, setLevel] = useState("");
@@ -53,8 +53,7 @@ const Onboard = () => {
   const org_entities = useSelector((state) => state.org_entities);
   const Router = useRouter();
 
-
-  const handleEdit = (id) => {
+  const handleEdit = (id) => {  
     setLoading(true);
     setModallabel("Update");
     dispatch(get_singleentity({ id: id }));
@@ -94,7 +93,6 @@ const Onboard = () => {
           icon: "success",
         });
         dispatch(deleteOrgentity({ entity_id: id }));
-        setPagechange(false);
       } else {
         swal("Organization Entity is safe!");
       }
@@ -141,37 +139,19 @@ const Onboard = () => {
     }
   }, [org_entities.get_singleorg_entity]);
 
-  const handlePageChange = (page) => {
-    fetchUsers(page);
-    setCurrentPage(page);
-    setPagechange(true);
-  };
-
-  const handlePerRowsChange = (newPerPage, page) => {
-    fetchUsers(page, newPerPage);
-    setPerPage(newPerPage);
-  };
-
-  const searchData = (e) => {
-    e.preventDefault();
-    setCurrentPage(1);
-    fetchUsers(currentPage);
-  };
-
-  const fetchUsers = (page1, size = perPage, search = searchText) => {
-    setLoading(true);
+  const fetchUsers = (page1, size = pageState.pageSize) => {
     const post_data = {
       page: page1,
       perPage: size,
-      search: search,
+      search: "",
     };
     dispatch(getOrgentities(post_data));
-    setLoading(false);
   };
 
   useEffect(() => {
-    if (org_entities.get_org_entities && !pageChange) {
-      fetchUsers(currentPage);
+    if (org_entities.get_org_entities && !pageState.isLoading) {
+      setPageState(old => ({ ...old, isLoading: true }))
+      fetchUsers(pageState.page);
     } else {
       const displayColumns = [
         "id",
@@ -183,16 +163,13 @@ const Onboard = () => {
       var udata = Pagination(
         org_entities.org_entities,
         org_entities.nextPage,
-        currentPage,
-        perPage,
+        pageState.page,
+        pageState.pageSize,
         displayColumns
       );
-      setData(udata);
-      setTotalRows(org_entities.total_count);
+      setPageState(old => ({ ...old, isLoading: false, data: udata, total: org_entities.total_count }));
     }
-    const user_data = JSON.parse(localStorage.getItem("user_data"));
-    setUserdata(user_data);
-  }, [org_entities.get_org_entities]);
+  }, [pageState.page, pageState.pageSize, org_entities.get_org_entities]);
 
   useEffect(() => {
     if (org_entities.is_org_entity_added) {
@@ -232,68 +209,64 @@ const Onboard = () => {
       fdata["created_by"] = userData.user_id;
       dispatch(createOrgentity(fdata));
     }
-    setPagechange(false);
   };
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
     {
-      field: 'firstName',
-      headerName: 'First name',
-      width: 150,
-      editable: true,
+      field: 'actions',
+      type: 'actions',
+      headerName: "Action",
+      width: 80,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<EditOutlined />}
+          label="Edit"
+          data-bs-toggle="modal"
+          data-bs-target="#staticBackdrop"
+          onClick={() => handleEdit(params.id)}
+        />,
+        <GridActionsCellItem
+          icon={<DeleteOutline />}
+          label="Delete"
+          onClick={() => handleDelete(params.id)}
+        />
+      ],
     },
-    {
-      field: 'lastName',
-      headerName: 'Last name',
-      width: 150,
-      editable: true,
-    },
-    {
-      field: 'age',
-      headerName: 'Age',
-      type: 'number',
-      width: 110,
-      editable: true,
-    },
-    {
-      field: 'fullName',
-      headerName: 'Full name',
-      description: 'This column has a value getter and is not sortable.',
-      sortable: false,
-      width: 160,
-    },
-  ];
-  
-  const rows = [
-    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-    { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+    { field: "serial", headerName: "S.No" },
+    { field: "org_id", headerName: "Org ID" },
+    { field: "org_name", headerName: "Organization Name", width: 200 },
+    { field: "org_hirarchy", headerName: "Organization Hirarchy", width: 200 },
+    { field: "location", headerName: "Location" },
   ];
 
   return (
     <>
       <Layout>
         <div className="card mb-5 mt-0 mx-5 p-0 h-70 overflow-y-hidden">
-
-          <div style={{ height: 400, width: '100%' }}>
+          <div style={{ height: 400, width: "100%" }}>
             <DataGrid
-              rows={rows}
-              columns={columns}
-              rowsPerPageOptions={[10,20,50,100]}
-              components={{ Toolbar: GridToolbar }} 
-              pageSize={perPage}
-              onPageSizeChange={(perPage) => setPerPage(perPage)}
+              components={{
+                Toolbar: GridToolbar,
+              }}
+              rows={pageState.data}
+              rowCount={pageState.total}
+              loading={pageState.isLoading}
+              rowsPerPageOptions={[10, 30, 50, 70, 100]}
               pagination
+              page={pageState.page - 1}
+              pageSize={pageState.pageSize}
+              paginationMode="server"
+              onPageChange={(newPage) => {
+                setPageState(old => ({ ...old, page: newPage + 1 }))
+                fetchUsers(newPage + 1)
+              }}
+              onPageSizeChange={(newPageSize) => {
+                setPageState(old => ({ ...old, pageSize: newPageSize }))
+                fetchUsers(pageState.page, newPageSize)
+              }}
+              columns={columns}
             />
           </div>
-
         </div>
         <div className="text-white ml-auto mr-5 text-right rounded">
           <button
